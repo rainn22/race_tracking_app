@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:race_tracking_app/screens/home_screen.dart';
+import 'package:race_tracking_app/screens/menu_screen.dart';
 import 'package:race_tracking_app/utils/theme.dart';
 
 void main() {
@@ -14,6 +14,8 @@ void main() {
   );
 }
 
+// void main() => runApp(const MyApp());
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -21,12 +23,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: const MenuScreen(),
       title: 'Triathlon Tracker',
       theme: appTheme,
-      initialRoute: '/login',
+      initialRoute: '/menu',
       routes: {
-        '/home': (context) => const HomeScreen(),
+        '/menu': (context) => const MenuScreen(),
       },
     );
   }
