@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:race_tracking_app/models/user.dart';
+import 'package:race_tracking_app/utils/constants.dart';
+
+class RoleCard extends StatelessWidget {
+  final Role role;
+  final VoidCallback onTap;
+  final bool isSelected;
+
+  const RoleCard({
+    super.key,
+    required this.role,
+    required this.onTap,
+    this.isSelected = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: isSelected ? AppColors.primary : AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: isSelected ? AppColors.primary : Colors.grey.shade300,
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                role.label,
+                style: AppTextStyles.textLg.copyWith(
+                  color: AppColors.text,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Tap to switch role',
+                style: AppTextStyles.textSm.copyWith(
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
