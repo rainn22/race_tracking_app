@@ -1,14 +1,16 @@
 // TODO Implement this library.
 import 'package:flutter/material.dart';
+import 'package:race_tracking_app/models/participant.dart';
+import 'package:race_tracking_app/utils/constants.dart';
 
-class TrackingPage extends StatefulWidget {
-  const TrackingPage({super.key});
+class TrackingScreen extends StatefulWidget {
+  const TrackingScreen({super.key});
 
   @override
-  State<TrackingPage> createState() => _TrackingPageState();
+  State<TrackingScreen> createState() => _TrackingScreenState();
 }
 
-class _TrackingPageState extends State<TrackingPage> {
+class _TrackingScreenState extends State<TrackingScreen> {
   // State variables
   DateTime? startTime;
   bool isTracking = false;
@@ -73,7 +75,7 @@ class _TrackingPageState extends State<TrackingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Race Timer'),
-        backgroundColor: Colors.grey[900],
+        backgroundColor: AppColors.primary,
       ),
       backgroundColor: Colors.grey[850],
       body: Padding(
@@ -228,9 +230,3 @@ class _TrackingPageState extends State<TrackingPage> {
   }
 }
 
-class Participant {
-  final String id;
-  final String name;
-
-  Participant({required this.id, required this.name});
-}
