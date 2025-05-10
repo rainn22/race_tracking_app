@@ -25,7 +25,7 @@ class RoleCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? AppColors.primary : AppColors.secondary,
               width: 1,
             ),
           ),
