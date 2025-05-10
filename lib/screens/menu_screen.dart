@@ -18,6 +18,7 @@ class MenuScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.padding),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: Role.values.map((role) {
             return Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.gap),
@@ -26,7 +27,6 @@ class MenuScreen extends StatelessWidget {
                 isSelected: currentRole == role,
                 onTap: () {
                   userProvider.switchRole(role);
-
                   if (role == Role.manager) {
                     Navigator.pushNamed(context, '/participant');
                   } else if (role == Role.tracker) {
