@@ -23,14 +23,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const MenuScreen(),
       title: 'Triathlon Tracker',
       theme: appTheme,
       initialRoute: '/menu',
       routes: {
         '/menu': (context) => const MenuScreen(),
         '/participant': (_) => const ParticipantScreen(),
-        // '/tracker': (_) => const TrackerScreen(),
       },
     );
   }
