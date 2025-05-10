@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:race_tracking_app/providers/user_provider.dart';
+import 'package:race_tracking_app/providers/participant_provider.dart';
+import 'package:race_tracking_app/repositories/participant_repository.dart';
 import 'package:race_tracking_app/ui/menu_screen.dart';
 import 'package:race_tracking_app/ui/participant_screen.dart';
 import 'package:race_tracking_app/ui/tracking_screen.dart';
 import 'package:race_tracking_app/utils/theme.dart';
 
 void main() {
+  final ParticipantRepository participantRepository = FirebaseParticipantRepository();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(
+          create: (_) => ParticipantProvider(participantRepository),
+        ),
       ],
       child: const MyApp(),
     ),
