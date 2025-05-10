@@ -18,34 +18,37 @@ class RoleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        color: isSelected ? AppColors.primary : AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: isSelected ? AppColors.primary : Colors.grey.shade300,
-            width: 1,
+      child: SizedBox(
+        width: double.infinity,
+        child: Card(
+          color: isSelected ? AppColors.primary : AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: isSelected ? AppColors.primary : AppColors.border,
+              width: 1,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.padding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                role.label,
-                style: AppTextStyles.textLg.copyWith(
-                  color: AppColors.text,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.padding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  role.label,
+                  style: AppTextStyles.textLg.copyWith(
+                    color: AppColors.text,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Tap to switch role',
-                style: AppTextStyles.textSm.copyWith(
-                  color: Colors.black54,
+                const SizedBox(height: 4),
+                Text(
+                  'Tap to switch role',
+                  style: AppTextStyles.textSm.copyWith(
+                    color: AppColors.text,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
