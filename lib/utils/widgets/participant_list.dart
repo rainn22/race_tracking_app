@@ -23,22 +23,27 @@ class ParticipantList extends StatelessWidget {
           itemCount: participants.length,
           itemBuilder: (context, index) {
             final participant = participants[index];
-            return ListTile(
-              title: Text(participant.name),
-              subtitle: Text("BIB: ${participant.bib}"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () =>
-                        showParticipantForm(context, participant: participant),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => provider.deleteParticipant(participant.id),
-                  ),
-                ],
+
+            return Dismissible(
+              key: Key(participant.id.toString()),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                color: Colors.red,
+                child: const Icon(Icons.delete, color: Colors.white),
+              ),
+              onDismissed: (_) {
+                provider.deleteParticipant(participant.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${participant.name} deleted')),
+                );
+              },
+              child: ListTile(
+                title: Text(participant.name),
+                subtitle: Text("BIB: ${participant.bib}"),
+                trailing: const Icon(Icons.edit, color: Colors.blue),
+                onTap: () => showParticipantForm(context, participant: participant),
               ),
             );
           },
