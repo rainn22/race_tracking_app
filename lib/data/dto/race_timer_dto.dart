@@ -1,9 +1,9 @@
-import 'package:race_tracking_app/models/race_timer.dart';
+import 'package:race_tracking_app/models/race_stage.dart';
 import 'package:race_tracking_app/models/status.dart';
 
-class RaceTimerDto {
-  static RaceTimer fromJson(Map<String, dynamic> json) {
-    return RaceTimer(
+class RaceStageDto {
+  static RaceStage fromJson(Map<String, dynamic> json) {
+    return RaceStage(
       startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : null,
       endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
       status: Status.values.firstWhere(
@@ -13,11 +13,11 @@ class RaceTimerDto {
     );
   }
 
-  static Map<String, dynamic> toJson(RaceTimer raceTimer) {
+  static Map<String, dynamic> toJson(RaceStage raceStage) {
     return {
-      'startTime': raceTimer.startTime?.toIso8601String(),
-      'endTime': raceTimer.endTime?.toIso8601String(),
-      'status': raceTimer.status.name,
+      'startTime': raceStage.startTime?.toIso8601String(),
+      'endTime': raceStage.endTime?.toIso8601String(),
+      'status': raceStage.status.name,
     };
   }
 }
