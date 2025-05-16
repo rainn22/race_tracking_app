@@ -22,7 +22,7 @@ class ParticipantTile extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         color: Colors.red,
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: const Icon(Icons.delete, color: AppColors.white),
       ),
       onDismissed: (_) {
         provider.deleteParticipant(participant.id);
@@ -33,7 +33,7 @@ class ParticipantTile extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            tileColor: Colors.white,
+            tileColor: AppColors.bg,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             leading: Container(
