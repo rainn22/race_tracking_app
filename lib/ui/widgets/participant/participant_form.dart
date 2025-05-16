@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:race_tracking_app/models/participant.dart';
 import 'package:race_tracking_app/providers/participant_provider.dart';
+import 'package:race_tracking_app/utils/constants.dart';
+import 'package:race_tracking_app/utils/widgets/button.dart';
 
 class EditParticipantModal {
   static Future<void> show(BuildContext context, Participant participant) {
@@ -63,59 +65,63 @@ class _ParticipantFormWidgetState extends State<ParticipantFormWidget> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Edit Participant',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _bibController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'BIB Number',
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.number,
-                validator: (value) => value!.isEmpty ? 'Enter BIB number' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Enter BIB number' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.white,
                 ),
-                validator: (value) => value!.isEmpty ? 'Enter participant name' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Enter participant name' : null,
               ),
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Cancel'),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF6C63FF),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  Expanded(
+                    child: AppButton(
+                      label: 'Cancel',
+                      color: Colors.grey.shade300,
+                      textColor: AppColors.text,
+                      onTap: () => Navigator.of(context).pop(),
                     ),
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final bib = int.tryParse(_bibController.text) ?? 0;
-                        final name = _nameController.text;
-                        provider.updateParticipant(widget.initialData.id, bib, name);
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Text('Save Changes'),
+                  ),
+                  const SizedBox(width: AppSpacing.gap),
+                  Expanded(
+                    child: AppButton(
+                      label: 'Save Changes',
+                      color: AppColors.primary,
+                      textColor: AppColors.text,
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          final bib = int.tryParse(_bibController.text) ?? 0;
+                          final name = _nameController.text;
+                          provider.updateParticipant(
+                              widget.initialData.id, bib, name);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
