@@ -28,7 +28,7 @@ class MenuScreen extends StatelessWidget {
                 onTap: () {
                   userProvider.switchRole(role);
                   if (role == Role.manager) {
-                    Navigator.pushNamed(context, '/participant');
+                    Navigator.pushNamed(context, '/manager');
                   } else if (role == Role.tracker) {
                     Navigator.pushNamed(context, '/tracker');
                   }
