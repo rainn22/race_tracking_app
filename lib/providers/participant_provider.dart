@@ -61,4 +61,10 @@ class ParticipantProvider extends ChangeNotifier {
     _editingParticipant = null;
     notifyListeners();
   }
+
+  List<int> getAllBibs() {
+  final bibs = participantState?.data?.map((p) => p.bib).toList() ?? [];
+  return bibs;
+}
+
 }
