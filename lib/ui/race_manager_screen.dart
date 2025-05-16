@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:race_tracking_app/utils/constants.dart';
-import 'package:race_tracking_app/utils/widgets/participant_form.dart';
-import 'package:race_tracking_app/utils/widgets/participant_list.dart';
-import 'package:race_tracking_app/utils/widgets/race_control_view.dart';
+import 'package:race_tracking_app/ui/widgets/participant/participant_view.dart';
+import 'package:race_tracking_app/ui/widgets/race_control/race_control_view.dart';
 import 'package:race_tracking_app/utils/widgets/segmentToggle.dart';
 
 class ParticipantScreen extends StatefulWidget {
@@ -18,13 +17,7 @@ class _ParticipantScreenState extends State<ParticipantScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Race Manager'),
-      actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => Navigator.pushNamed(context, '/showParticipant')
-            ),
-          ],),
+      appBar: AppBar(title: const Text('Race Manager')),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.padding),
         child: Column(
@@ -50,6 +43,3 @@ class _ParticipantScreenState extends State<ParticipantScreen> {
     );
   }
 }
-
-
-
