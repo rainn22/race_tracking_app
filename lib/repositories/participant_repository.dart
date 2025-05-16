@@ -1,8 +1,8 @@
-import 'package:race_tracking_app/data/dto/participant_dto.dart';
-import 'package:race_tracking_app/models/participant.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:race_tracking_app/data/dto/participant_dto.dart';
+import 'package:race_tracking_app/models/participant.dart';
 
 abstract class ParticipantRepository {
   Future<Participant> addParticipant({required String name, required int bib});
