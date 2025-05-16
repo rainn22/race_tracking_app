@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:race_tracking_app/providers/participant_provider.dart';
 import 'package:race_tracking_app/ui/widgets/participant/participant_tile.dart';
 
-class ParticipantListView extends StatelessWidget {
-  const ParticipantListView({super.key});
+class ParticipantList extends StatelessWidget {
+  const ParticipantList({super.key});
 
   @override
   Widget build(BuildContext context) {
