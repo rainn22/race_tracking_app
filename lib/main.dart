@@ -6,10 +6,10 @@ import 'package:race_tracking_app/providers/race_stage_provider.dart';
 import 'package:race_tracking_app/repositories/participant_repository.dart';
 import 'package:race_tracking_app/repositories/race_stage_repository.dart';
 import 'package:race_tracking_app/ui/menu_screen.dart';
-import 'package:race_tracking_app/ui/participant_screen.dart';
+import 'package:race_tracking_app/ui/race_manager_screen.dart';
 import 'package:race_tracking_app/ui/tracking_screen.dart';
 import 'package:race_tracking_app/utils/theme.dart';
-import 'package:race_tracking_app/utils/widgets/participant_list.dart';
+import 'package:race_tracking_app/ui/widgets/participant/participant_view.dart';
 
 Future<void> main() async {
   final participantRepository = FirebaseParticipantRepository();
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         '/menu': (context) => const MenuScreen(),
         '/participant': (context) => const ParticipantScreen(),
         '/showParticipant': (context) => const ParticipantList(),
-        // '/tracker': (context) => const TrackingScreen(),
+        '/tracker': (context) => const TrackingScreen(),
       },
     );
   }
