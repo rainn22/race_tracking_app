@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:race_tracking_app/models/status.dart';
+import 'package:race_tracking_app/providers/race_stage_provider.dart';
 import 'package:race_tracking_app/utils/constants.dart';
 import 'package:race_tracking_app/utils/widgets/button.dart';
 import 'package:race_tracking_app/ui/widgets/participant/participant_list.dart';
@@ -8,6 +11,11 @@ class ParticipantListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final raceStatus = context.watch<RaceStageProvider>().raceStage?.status ??
+        Status.notStarted;
+    final isRaceStarted =
+        raceStatus == Status.started || raceStatus == Status.finished;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -17,18 +25,17 @@ class ParticipantListScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Participant',
-                    style: AppTextStyles.textLg
-                  ),
+                  const Text('Participant', style: AppTextStyles.textLg),
                   AppButton(
                     label: 'Add Participant',
-                    color: AppColors.secondary,
+                    color: isRaceStarted ? AppColors.secondary : AppColors.primary,
                     textColor: AppColors.text,
                     icon: Icons.group_add,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/addParticipant');
-                    },
+                    onTap: isRaceStarted
+                        ? () {}
+                        : () {
+                            Navigator.pushNamed(context, '/addParticipant');
+                          },
                   ),
                 ],
               ),
