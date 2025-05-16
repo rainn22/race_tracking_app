@@ -4,8 +4,8 @@ import 'package:race_tracking_app/models/status.dart';
 import 'package:race_tracking_app/providers/race_stage_provider.dart';
 import 'package:race_tracking_app/utils/widgets/race_time_stamp.dart';
 
-class RaceControlView extends StatelessWidget {
-  const RaceControlView({super.key});
+class RaceControlScreen extends StatelessWidget {
+  const RaceControlScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

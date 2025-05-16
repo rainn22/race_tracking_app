@@ -1,48 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:race_tracking_app/utils/constants.dart';
-import 'package:race_tracking_app/utils/widgets/participant_form.dart';
-import 'package:race_tracking_app/utils/widgets/participant_list.dart';
-import 'package:race_tracking_app/utils/widgets/race_control_view.dart';
-import 'package:race_tracking_app/utils/widgets/segmentToggle.dart';
+import 'package:race_tracking_app/utils/widgets/button.dart';
+import 'package:race_tracking_app/ui/widgets/participant/participant_list.dart';
 
-class ParticipantScreen extends StatefulWidget {
-  const ParticipantScreen({super.key});
-
-  @override
-  State<ParticipantScreen> createState() => _ParticipantScreenState();
-}
-
-class _ParticipantScreenState extends State<ParticipantScreen> {
-  int selectedIndex = 0;
+class ParticipantListScreen extends StatelessWidget {
+  const ParticipantListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Race Manager'),
-      actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => showParticipantForm(context), // Add participant form
-            ),
-          ],),
-      body: Padding(
-        padding: const EdgeInsets.all(AppSpacing.padding),
+      body: SafeArea(
         child: Column(
           children: [
-            SegmentToggle(
-              labels: const ['Participants', 'Race Control'],
-              selectedIndex: selectedIndex,
-              onTabSelected: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.padding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Participant',
+                    style: AppTextStyles.textLg
+                  ),
+                  AppButton(
+                    label: 'Add Participant',
+                    color: AppColors.secondary,
+                    textColor: AppColors.text,
+                    icon: Icons.group_add,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/addParticipant');
+                    },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.gap),
-            Expanded(
-              child: selectedIndex == 0
-                  ? const ParticipantList()
-                  : const RaceControlView(),
+            const Expanded(
+              child: ParticipantList(),
             ),
           ],
         ),
@@ -50,6 +42,3 @@ class _ParticipantScreenState extends State<ParticipantScreen> {
     );
   }
 }
-
-
-
