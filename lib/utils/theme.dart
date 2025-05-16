@@ -3,7 +3,7 @@ import 'constants.dart';
 
 final ThemeData appTheme = ThemeData(
   primaryColor: AppColors.primary,
-  scaffoldBackgroundColor: AppColors.white,
+  scaffoldBackgroundColor: AppColors.bg,
   colorScheme: ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     primary: AppColors.primary,
