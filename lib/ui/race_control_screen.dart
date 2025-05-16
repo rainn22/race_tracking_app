@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:race_tracking_app/models/status.dart';
 import 'package:race_tracking_app/providers/race_stage_provider.dart';
+import 'package:race_tracking_app/utils/constants.dart';
+import 'package:race_tracking_app/utils/status_color.dart';
+import 'package:race_tracking_app/utils/widgets/button.dart';
 import 'package:race_tracking_app/utils/widgets/race_time_stamp.dart';
 
 class RaceControlScreen extends StatelessWidget {
@@ -16,96 +19,75 @@ class RaceControlScreen extends StatelessWidget {
     final endTime = timer?.endTime;
 
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(AppSpacing.padding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Race Control Panel',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+          const Text('Race Control Panel', style: AppTextStyles.textLg),
+          const Text('Manage your race timing and participants',
+              style: AppTextStyles.textSm),
           const SizedBox(height: 20),
-
           Card(
-            color: Colors.grey.shade100,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            color: AppColors.white,
             elevation: 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 16),
+              padding: const EdgeInsets.symmetric(
+                  vertical: 30.0, horizontal: AppSpacing.padding),
               child: Column(
                 children: [
-                  _infoRow("Race Status", status.label),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Race Status: ", style: AppTextStyles.textLg),
+                      RaceStatus(value: status.label)
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   RaceTimeStamp(
                     start: startTime,
                     end: status == Status.finished ? endTime : DateTime.now(),
                   ),
                   const SizedBox(height: 10),
+                  _buildActionButton(status, timerProvider),
                 ],
               ),
             ),
           ),
-
-          const SizedBox(height: 40),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton.icon(
-                onPressed: status == Status.notStarted
-                    ? () => timerProvider.startRace()
-                    : null,
-                icon: const Icon(Icons.play_arrow),
-                label: const Text("Start Race"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  disabledBackgroundColor: Colors.green.shade200,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: status == Status.started
-                    ? () => timerProvider.endRace()
-                    : null,
-                icon: const Icon(Icons.stop),
-                label: const Text("End Race"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  disabledBackgroundColor: Colors.red.shade200,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: status == Status.finished
-                    ? () => timerProvider.restartRace()
-                    : null,
-                icon: const Icon(Icons.restart_alt),
-                label: const Text("Restart"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  disabledBackgroundColor: Colors.blue.shade200,
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );
   }
 
-  Widget _infoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        children: [
-          Text(
-            "$label:",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
+  Widget _buildActionButton(Status status, RaceStageProvider provider) {
+    switch (status) {
+      case Status.notStarted:
+        return AppButton(
+          label: "Start Race",
+          color: AppColors.green,
+          textColor: AppColors.white,
+          icon: Icons.play_arrow,
+          onTap: () => provider.startRace(),
+        );
+      case Status.started:
+        return AppButton(
+          label: "End Race",
+          color: AppColors.red,
+          textColor: Colors.white,
+          icon: Icons.stop,
+          onTap: () => provider.endRace(),
+        );
+      case Status.finished:
+        return AppButton(
+          label: "Restart",
+          color: AppColors.blue,
+          textColor: Colors.white,
+          icon: Icons.restart_alt,
+          onTap: () => provider.restartRace(),
+        );
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }
