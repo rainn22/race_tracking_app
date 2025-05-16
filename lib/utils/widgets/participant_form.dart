@@ -3,16 +3,33 @@ import 'package:provider/provider.dart';
 import 'package:race_tracking_app/models/participant.dart';
 import 'package:race_tracking_app/providers/participant_provider.dart';
 
-class ParticipantForm extends StatefulWidget {
-  final Participant? participant;
-
-  const ParticipantForm({super.key, this.participant});
-
-  @override
-  State<ParticipantForm> createState() => _ParticipantFormState();
+class EditParticipantModal {
+  static Future<void> show(BuildContext context, Participant participant) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ParticipantFormWidget(initialData: participant),
+        );
+      },
+    );
+  }
 }
 
-class _ParticipantFormState extends State<ParticipantForm> {
+class ParticipantFormWidget extends StatefulWidget {
+  final Participant initialData;
+
+  const ParticipantFormWidget({super.key, required this.initialData});
+
+  @override
+  State<ParticipantFormWidget> createState() => _ParticipantFormWidgetState();
+}
+
+class _ParticipantFormWidgetState extends State<ParticipantFormWidget> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bibController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -20,67 +37,92 @@ class _ParticipantFormState extends State<ParticipantForm> {
   @override
   void initState() {
     super.initState();
-    if (widget.participant != null) {
-      _bibController.text = widget.participant!.bib.toString();
-      _nameController.text = widget.participant!.name;
-    }
+    _bibController.text = widget.initialData.bib.toString();
+    _nameController.text = widget.initialData.name;
+  }
+
+  @override
+  void dispose() {
+    _bibController.dispose();
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ParticipantProvider>(context, listen: false);
 
-    return AlertDialog(
-      title: Text(widget.participant == null ? 'Add Participant' : 'Edit Participant'),
-      content: Form(
+    return Container(
+      color: Colors.white,
+      width: double.infinity,
+      child: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _bibController,
-              decoration: const InputDecoration(labelText: 'BIB Number'),
-              keyboardType: TextInputType.number,
-              validator: (value) => value!.isEmpty ? 'Enter BIB number' : null,
-            ),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-              validator: (value) => value!.isEmpty ? 'Enter participant name' : null,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Edit Participant',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _bibController,
+                decoration: InputDecoration(
+                  labelText: 'BIB Number',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) => value!.isEmpty ? 'Enter BIB number' : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                validator: (value) => value!.isEmpty ? 'Enter participant name' : null,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel'),
+                  ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF6C63FF),
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        final bib = int.tryParse(_bibController.text) ?? 0;
+                        final name = _nameController.text;
+                        provider.updateParticipant(widget.initialData.id, bib, name);
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Text('Save Changes'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              final bib = int.tryParse(_bibController.text) ?? 0;
-              final name = _nameController.text;
-
-              if (widget.participant == null) {
-                provider.addParticipant(bib, name);
-              } else {
-                provider.updateParticipant(widget.participant!.id, bib, name);
-              }
-
-              Navigator.of(context).pop();
-            }
-          },
-          child: Text(widget.participant == null ? 'Add' : 'Save'),
-        ),
-      ],
     );
   }
-}
-
-void showParticipantForm(BuildContext context, {Participant? participant}) {
-  showDialog(
-    context: context,
-    builder: (context) => ParticipantForm(participant: participant),
-  );
 }

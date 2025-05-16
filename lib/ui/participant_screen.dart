@@ -22,7 +22,7 @@ class _ParticipantScreenState extends State<ParticipantScreen> {
       actions: [
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () => showParticipantForm(context), // Add participant form
+              onPressed: () => Navigator.pushNamed(context, '/showParticipant')
             ),
           ],),
       body: Padding(

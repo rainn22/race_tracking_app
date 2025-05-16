@@ -7,6 +7,7 @@ import 'package:race_tracking_app/ui/menu_screen.dart';
 import 'package:race_tracking_app/ui/participant_screen.dart';
 import 'package:race_tracking_app/ui/tracking_screen.dart';
 import 'package:race_tracking_app/utils/theme.dart';
+import 'package:race_tracking_app/utils/widgets/participant_list.dart';
 
 void main() {
   final ParticipantRepository participantRepository = FirebaseParticipantRepository();
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/menu': (context) => const MenuScreen(),
         '/participant': (context) => const ParticipantScreen(),
-        '/tracker': (context) => const TrackingScreen(),
+        '/showParticipant': (context) => const ParticipantList(),
+        // '/tracker': (context) => const TrackingScreen(),
       },
     );
   }
