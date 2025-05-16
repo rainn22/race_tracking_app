@@ -40,9 +40,7 @@ class SegmentToggle extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   labels[index],
-                  style: AppTextStyles.textLg.copyWith(
-                    color: AppColors.text,
-                  ),
+                  style: AppTextStyles.textLg
                 ),
               ),
             ),
