@@ -1,237 +1,187 @@
 import 'package:flutter/material.dart';
-import 'package:race_tracking_app/models/participant.dart';
-import 'package:race_tracking_app/repositories/mock/participant_repo.dart';
-//import 'package:race_tracking_app/utils/constants.dart';
 
-// class TrackingScreen extends StatefulWidget {
-//   const TrackingScreen({super.key});
+enum RaceStage { swim, cycle, run }
+
+class TrackingScreen extends StatefulWidget {
+  const TrackingScreen({super.key});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();
 }
+
 class _TrackingScreenState extends State<TrackingScreen> {
-  final ParticipantRepository _participantRepository = ParticipantRepository(); // Instance of your service
-  List<Participant> allParticipants = [];
-  List<Participant> trackingParticipants = [];
-  List<Participant> trackedParticipants = [];
-  bool showAllTracking = true;
-  bool showAllTracked = true;
-  bool _isLoading = true; // To indicate loading state
-  String? _error; // To hold any error message
+  RaceStage currentStage = RaceStage.swim;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchParticipants();
-  }
+  final Map<RaceStage, List<String>> allParticipants = {
+    RaceStage.swim: List.generate(10, (index) => 'Swimmer $index'),
+    RaceStage.cycle: [],
+    RaceStage.run: [],
+  };
 
-  Future<void> _fetchParticipants() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final List<Participant> participants = await _participantRepository.getParticipants();
+  final Map<RaceStage, List<String>> trackedParticipants = {
+    RaceStage.swim: [],
+    RaceStage.cycle: [],
+    RaceStage.run: [],
+  };
+
+  void onParticipantTap(String name) {
+    if (!trackedParticipants[currentStage]!.contains(name)) {
       setState(() {
-        allParticipants = participants;
-        trackingParticipants = List.from(allParticipants); // Initially all are to be tracked
-        _isLoading = false;
+        trackedParticipants[currentStage]!.add(name);
+        allParticipants[currentStage]!.remove(name);
+
+        // Automatically move to next stage
+        if (currentStage == RaceStage.swim) {
+          allParticipants[RaceStage.cycle]!.add(name);
+        } else if (currentStage == RaceStage.cycle) {
+          allParticipants[RaceStage.run]!.add(name);
+        }
       });
-    } catch (e) {
+    } else {
       setState(() {
-        _error = 'Failed to fetch participants: $e';
-        _isLoading = false;
+        trackedParticipants[currentStage]!.remove(name);
+        allParticipants[currentStage]!.add(name);
+        allParticipants[currentStage]!.sort(); // Keep the list ordered
       });
     }
   }
 
-  void moveToTracked(Participant participant) {
-    setState(() {
-      trackingParticipants.remove(participant);
-      trackedParticipants.add(participant);
-      // In a real app, you might want to update Firebase here as well
-    });
-  }
-
-  void moveToTracking(Participant participant) {
-    setState(() {
-      trackedParticipants.remove(participant);
-      trackingParticipants.add(participant);
-      // In a real app, you might want to update Firebase here as well
-    });
-  }
-
-  List<Participant> getDisplayedTracking() {
-    if (showAllTracking) {
-      return trackingParticipants;
-    } else {
-      // Replace with your actual "active" filtering logic based on Firebase data
-      return trackingParticipants.where((p) => p.isActive == true).toList(); // Example
-    }
-  }
-
-  List<Participant> getDisplayedTracked() {
-    if (showAllTracked) {
-      return trackedParticipants;
-    } else {
-      // Replace with your actual "active" filtering logic based on Firebase data
-      return trackedParticipants.where((p) => p.isActive == true).toList(); // Example
+  String getStageTitle(RaceStage stage) {
+    switch (stage) {
+      case RaceStage.swim:
+        return 'Swimming Stage';
+      case RaceStage.cycle:
+        return 'Cycling Stage';
+      case RaceStage.run:
+        return 'Running Stage';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_error != null) {
-      return Scaffold(
-        body: Center(child: Text('Error: $_error')),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Track Participants'),
-        backgroundColor: Colors.grey[900],
+        title: const Text("Triathlon Tracker"),
+        centerTitle: true,
       ),
-      backgroundColor: Colors.grey[800],
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Tracking Participants Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Column(
+        children: [
+          const SizedBox(height: 10),
+          ToggleButtons(
+            isSelected: [
+              currentStage == RaceStage.swim,
+              currentStage == RaceStage.cycle,
+              currentStage == RaceStage.run,
+            ],
+            onPressed: (int index) {
+              setState(() {
+                currentStage = RaceStage.values[index];
+              });
+            },
+            children: const [
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Swim")),
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Cycle")),
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Run")),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(getStageTitle(currentStage), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: Column(
               children: [
-                const Text(
-                  'Tracking Participants',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                Expanded(
+                  child: ParticipantGrid(
+                    title: 'All Participants',
+                    names: allParticipants[currentStage]!,
+                    onTap: onParticipantTap,
+                    avatarColor: Colors.grey,
+                  ),
                 ),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          showAllTracking = true;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: showAllTracking ? Colors.blueAccent : Colors.grey[400],
-                      ),
-                      child: const Text('All', style: TextStyle(color: Colors.white)),
-                    ),
-                    const SizedBox(width: 8.0),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          showAllTracking = false;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: showAllTracking ? Colors.grey[400] : Colors.blueAccent,
-                      ),
-                      child: const Text('Active', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
+                Expanded(
+                  child: ParticipantGrid(
+                    title: 'Tracked Participants',
+                    names: trackedParticipants[currentStage]!,
+                    onTap: onParticipantTap,
+                    avatarColor: currentStage == RaceStage.swim
+                        ? Colors.orange
+                        : currentStage == RaceStage.cycle
+                            ? Colors.yellow
+                            : Colors.green,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 8.0),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: getDisplayedTracking().map((participant) {
-                return ElevatedButton(
-                  onPressed: () => moveToTracked(participant),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[600],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(participant.bib as String, style: const TextStyle(fontSize: 18.0)), // Assuming 'id' might be nullable
-                      Text(participant.name ?? ''), // Assuming 'name' might be nullable
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20.0),
+          )
+        ],
+      ),
+    );
+  }
+}
 
-            // Tracked Participants Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Tracked Participants',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          showAllTracked = true;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: showAllTracked ? Colors.blueAccent : Colors.grey[400],
-                      ),
-                      child: const Text('All', style: TextStyle(color: Colors.white)),
-                    ),
-                    const SizedBox(width: 8.0),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          showAllTracked = false;
-                        });
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: showAllTracked ? Colors.grey[400] : Colors.blueAccent,
-                      ),
-                      child: const Text('Active', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: getDisplayedTracked().map((participant) {
-                return ElevatedButton(
-                  onPressed: () => moveToTracking(participant),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[600],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(16.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
+class ParticipantGrid extends StatelessWidget {
+  final String title;
+  final List<String> names;
+  final void Function(String)? onTap;
+  final Color avatarColor;
+
+  const ParticipantGrid({
+    super.key,
+    required this.title,
+    required this.names,
+    this.onTap,
+    required this.avatarColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(12),
+      elevation: 4,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: names.length,
+              itemBuilder: (context, index) {
+                final name = names[index];
+                return GestureDetector(
+                  onTap: onTap != null ? () => onTap!(name) : null,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(participant.bib as String , style: const TextStyle(fontSize: 18.0)),
-                      Text(participant.name ?? ''),
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: avatarColor,
+                        child: Text(
+                          name.split(' ').last,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        name,
+                        style: const TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                      )
                     ],
                   ),
                 );
-              }).toList(),
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
