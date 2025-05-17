@@ -8,7 +8,7 @@ import 'package:race_tracking_app/repositories/race_stage_repository.dart';
 import 'package:race_tracking_app/ui/add_particpant_screen.dart';
 import 'package:race_tracking_app/ui/menu_screen.dart';
 import 'package:race_tracking_app/ui/race_manager_screen.dart';
-import 'package:race_tracking_app/ui/tracking_screen.dart';
+import 'package:race_tracking_app/ui/splash_screen.dart';
 import 'package:race_tracking_app/utils/theme.dart';
 import 'package:race_tracking_app/ui/participant_screen.dart';
 
@@ -39,13 +39,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Triathlon Tracker',
       theme: appTheme,
-      initialRoute: '/menu',
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const SplashScreen(),
         '/menu': (context) => const MenuScreen(),
         '/manager': (context) => const ManagerScreen(),
         '/participant': (context) => const ParticipantListScreen(),
         '/addParticipant': (context) => const BulkAddParticipantsScreen(),
-        '/tracker': (context) => const TrackingScreen(),
+        // '/tracker': (context) => const TrackingScreen(),
       },
     );
   }
