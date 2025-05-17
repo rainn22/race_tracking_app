@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:race_tracking_app/data/segment_controller_dto.dart';
+import 'package:race_tracking_app/data/dto/segment_controller_dto.dart';
 import '../models/segment_controller.dart';
 import '../models/segment.dart';
 
