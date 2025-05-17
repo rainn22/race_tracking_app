@@ -17,7 +17,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
   final List<Widget> _screens = const [
     ParticipantListScreen(),
     RaceControlScreen(),
-    DashboardScreen(),
+    ResultScreen(),
   ];
 
   void _onTabSelected(int index) {
