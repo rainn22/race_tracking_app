@@ -3,6 +3,7 @@ enum Role {
   tracker('Time Tracker');
 
   final String label;
+  
   const Role(this.label);
 }
 

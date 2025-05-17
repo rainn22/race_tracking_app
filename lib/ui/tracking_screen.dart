@@ -3,8 +3,8 @@ import 'package:race_tracking_app/models/participant.dart';
 import 'package:race_tracking_app/repositories/mock/participant_repo.dart';
 //import 'package:race_tracking_app/utils/constants.dart';
 
-class TrackingScreen extends StatefulWidget {
-  const TrackingScreen({super.key});
+// class TrackingScreen extends StatefulWidget {
+//   const TrackingScreen({super.key});
 
   @override
   State<TrackingScreen> createState() => _TrackingScreenState();

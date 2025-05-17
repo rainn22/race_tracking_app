@@ -25,7 +25,7 @@ class RoleCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? AppColors.primary : AppColors.secondary,
               width: 1,
             ),
           ),
@@ -34,12 +34,7 @@ class RoleCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  role.label,
-                  style: AppTextStyles.textLg.copyWith(
-                    color: AppColors.text,
-                  ),
-                ),
+                Text(role.label, style: AppTextStyles.textLg),
                 const SizedBox(height: 4),
                 Text(
                   'Tap to switch role',
