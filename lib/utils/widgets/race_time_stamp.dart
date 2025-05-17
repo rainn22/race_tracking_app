@@ -36,7 +36,7 @@ class RaceTimeStamp extends StatelessWidget {
             letterSpacing: 4,
           )
         : const TextStyle(
-            fontSize: 20,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             letterSpacing: 2,
           );
