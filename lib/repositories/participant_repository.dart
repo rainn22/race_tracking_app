@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:race_tracking_app/data/dto/participant_dto.dart';
 import 'package:race_tracking_app/models/participant.dart';
 
 abstract class ParticipantRepository {
@@ -18,11 +17,18 @@ class FirebaseParticipantRepository extends ParticipantRepository {
   static const String allUrl = '$baseUrl/$collection.json';
 
   @override
-  Future<Participant> addParticipant(
-      {required String name, required int bib}) async {
+  Future<Participant> addParticipant({
+    required String name,
+    required int bib,
+  }) async {
     Uri uri = Uri.parse(allUrl);
 
-    final newParticipantData = {'name': name, 'bib': bib};
+    final newParticipantData = {
+      'name': name,
+      'bib': bib,
+      // removed 'isActive'
+    };
+
     final http.Response response = await http.post(
       uri,
       headers: {'Content-Type': 'application/json'},
@@ -50,9 +56,15 @@ class FirebaseParticipantRepository extends ParticipantRepository {
     final data = json.decode(response.body) as Map<String, dynamic>?;
     if (data == null) return [];
 
-    return data.entries
-        .map((entry) => ParticipantDto.fromJson(entry.key, entry.value))
-        .toList();
+    return data.entries.map((entry) {
+      final id = entry.key;
+      final value = entry.value;
+      return Participant(
+        id: id,
+        name: value['name'],
+        bib: value['bib'],
+      );
+    }).toList();
   }
 
   @override

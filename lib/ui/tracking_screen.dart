@@ -1,232 +1,188 @@
-// // TODO Implement this library.
-// import 'package:flutter/material.dart';
-// import 'package:race_tracking_app/models/participant.dart';
-// import 'package:race_tracking_app/utils/constants.dart';
+import 'package:flutter/material.dart';
 
-// class TrackingScreen extends StatefulWidget {
-//   const TrackingScreen({super.key});
+enum RaceStage { swim, cycle, run }
 
-//   @override
-//   State<TrackingScreen> createState() => _TrackingScreenState();
-// }
+class TrackingScreen extends StatefulWidget {
+  const TrackingScreen({super.key});
 
-// class _TrackingScreenState extends State<TrackingScreen> {
-//   // State variables
-//   DateTime? startTime;
-//   bool isTracking = false;
-//   String raceStatus = 'Race in progress'; // Example status
-//   String currentSegment = 'Run'; // Default to Run
-//   List<Participant> participants = [
-//     Participant(id: '#4', name: 'da'),
-//     Participant(id: '#2', name: 'ka'),
-//     Participant(id: '#3', name: 'lu'),
-//     Participant(id: '#1', name: 'ta'),
-//   ]; // Dummy participant data
-//   List<Participant> displayedParticipants = [];
-//   bool showActiveOnly = false;
+  @override
+  State<TrackingScreen> createState() => _TrackingScreenState();
+}
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     displayedParticipants = participants; // Initially show all participants
-//   }
+class _TrackingScreenState extends State<TrackingScreen> {
+  RaceStage currentStage = RaceStage.swim;
 
-//   // Functions for segment control
-//   void selectSegment(String segment) {
-//     setState(() {
-//       currentSegment = segment;
-//     });
-//   }
+  final Map<RaceStage, List<String>> allParticipants = {
+    RaceStage.swim: List.generate(10, (index) => 'Swimmer $index'),
+    RaceStage.cycle: [],
+    RaceStage.run: [],
+  };
 
-//   // Function to handle the "Track" button for a participant
-//   void trackParticipant(Participant participant) {
-//     // Implement your tracking logic here (e.g., navigate to a detailed tracking screen)
-//     print('Tracking ${participant.id}');
-//   }
+  final Map<RaceStage, List<String>> trackedParticipants = {
+    RaceStage.swim: [],
+    RaceStage.cycle: [],
+    RaceStage.run: [],
+  };
 
-//   // Function to filter participants
-//   void filterParticipants(bool activeOnly) {
-//     setState(() {
-//       showActiveOnly = activeOnly;
-//       if (activeOnly) {
-//         // In a real app, you'd filter based on some 'isActive' status
-//         displayedParticipants = participants.where((p) => p.id != '#3').toList(); // Example filter
-//       } else {
-//         displayedParticipants = participants;
-//       }
-//     });
-//   }
+  void onParticipantTap(String name) {
+    if (!trackedParticipants[currentStage]!.contains(name)) {
+      setState(() {
+        trackedParticipants[currentStage]!.add(name);
+        allParticipants[currentStage]!.remove(name);
 
-//   // Helper function to format time (simplified for the main timer display)
-//   String formatTime(DateTime? time) {
-//     if (time == null) {
-//       return '00:00:00';
-//     }
-//     final Duration difference = time.difference(startTime ?? time);
-//     twoDigits(int n) => n.toString().padLeft(2, '0');
-//     final String minutes = twoDigits(difference.inMinutes.remainder(60));
-//     final String seconds = twoDigits(difference.inSeconds.remainder(60));
-//     final String hours = twoDigits(difference.inHours);
-//     return '$hours:$minutes:$seconds';
-//   }
+        // Automatically move to next stage
+        if (currentStage == RaceStage.swim) {
+          allParticipants[RaceStage.cycle]!.add(name);
+        } else if (currentStage == RaceStage.cycle) {
+          allParticipants[RaceStage.run]!.add(name);
+        }
+      });
+    } else {
+      setState(() {
+        trackedParticipants[currentStage]!.remove(name);
+        allParticipants[currentStage]!.add(name);
+        allParticipants[currentStage]!.sort(); // Keep the list ordered
+      });
+    }
+  }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Race Timer'),
-//         backgroundColor: AppColors.primary,
-//       ),
-//       backgroundColor: Colors.grey[850],
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: <Widget>[
-//             // Race Timer Display
-//             Center(
-//               child: Column(
-//                 children: [
-//                   Text(
-//                     formatTime(isTracking ? DateTime.now() : startTime),
-//                     style: const TextStyle(fontSize: 48.0, color: Colors.white),
-//                   ),
-//                   const SizedBox(height: 4.0),
-//                   Text(
-//                     raceStatus,
-//                     style: const TextStyle(color: Colors.grey),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 20.0),
+  String getStageTitle(RaceStage stage) {
+    switch (stage) {
+      case RaceStage.swim:
+        return 'Swimming Stage';
+      case RaceStage.cycle:
+        return 'Cycling Stage';
+      case RaceStage.run:
+        return 'Running Stage';
+    }
+  }
 
-//             // Current Segment
-//             Text(
-//               'Current Segment',
-//               style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white70),
-//             ),
-//             const SizedBox(height: 8.0),
-//             Row(
-//               children: [
-//                 ElevatedButton(
-//                   onPressed: () => selectSegment('Run'),
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: currentSegment == 'Run' ? Colors.red : Colors.grey[700],
-//                   ),
-//                   child: const Row(
-//                     children: [
-//                       Icon(Icons.directions_run, color: Colors.white),
-//                       SizedBox(width: 4.0),
-//                       Text('Run', style: TextStyle(color: Colors.white)),
-//                     ],
-//                   ),
-//                 ),
-//                 const SizedBox(width: 8.0),
-//                 ElevatedButton(
-//                   onPressed: () => selectSegment('Swim'),
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: currentSegment == 'Swim' ? Colors.blue : Colors.grey[700],
-//                   ),
-//                   child: const Row(
-//                     children: [
-//                       Icon(Icons.pool, color: Colors.white),
-//                       SizedBox(width: 4.0),
-//                       Text('Swim', style: TextStyle(color: Colors.white)),
-//                     ],
-//                   ),
-//                 ),
-//                 const SizedBox(width: 8.0),
-//                 ElevatedButton(
-//                   onPressed: () => selectSegment('Cycle'),
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: currentSegment == 'Cycle' ? Colors.green : Colors.grey[700],
-//                   ),
-//                   child: const Row(
-//                     children: [
-//                       Icon(Icons.directions_bike, color: Colors.white),
-//                       SizedBox(width: 4.0),
-//                       Text('Cycle', style: TextStyle(color: Colors.white)),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 20.0),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Triathlon Tracker"),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 10),
+          ToggleButtons(
+            isSelected: [
+              currentStage == RaceStage.swim,
+              currentStage == RaceStage.cycle,
+              currentStage == RaceStage.run,
+            ],
+            onPressed: (int index) {
+              setState(() {
+                currentStage = RaceStage.values[index];
+              });
+            },
+            children: const [
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Swim")),
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Cycle")),
+              Padding(padding: EdgeInsets.all(8.0), child: Text("Run")),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(getStageTitle(currentStage), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ParticipantGrid(
+                    title: 'All Participants',
+                    names: allParticipants[currentStage]!,
+                    onTap: onParticipantTap,
+                    avatarColor: Colors.grey,
+                  ),
+                ),
+                Expanded(
+                  child: ParticipantGrid(
+                    title: 'Tracked Participants',
+                    names: trackedParticipants[currentStage]!,
+                    onTap: onParticipantTap,
+                    avatarColor: currentStage == RaceStage.swim
+                        ? Colors.orange
+                        : currentStage == RaceStage.cycle
+                            ? Colors.yellow
+                            : Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
 
-//             // Track Participants
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 const Text(
-//                   'Track Participants',
-//                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white70),
-//                 ),
-//                 Row(
-//                   children: [
-//                     TextButton(
-//                       onPressed: () => filterParticipants(false),
-//                       style: TextButton.styleFrom(
-//                         foregroundColor: showActiveOnly ? Colors.grey : Colors.blueAccent,
-//                       ),
-//                       child: const Text('All', style: TextStyle(color: Colors.white)),
-//                     ),
-//                     const SizedBox(width: 8.0),
-//                     TextButton(
-//                       onPressed: () => filterParticipants(true),
-//                       style: TextButton.styleFrom(
-//                         foregroundColor: showActiveOnly ? Colors.blueAccent : Colors.grey,
-//                       ),
-//                       child: const Text('Active', style: TextStyle(color: Colors.white)),
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 8.0),
-//             Expanded(
-//               child: GridView.builder(
-//                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//                   crossAxisCount: 3,
-//                   childAspectRatio: 1.0,
-//                   crossAxisSpacing: 8.0,
-//                   mainAxisSpacing: 8.0,
-//                 ),
-//                 itemCount: displayedParticipants.length,
-//                 itemBuilder: (context, index) {
-//                   final participant = displayedParticipants[index];
-//                   return Container(
-//                     padding: const EdgeInsets.all(8.0),
-//                     decoration: BoxDecoration(
-//                       color: Colors.grey[700],
-//                       borderRadius: BorderRadius.circular(8.0),
-//                     ),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         Text(participant.id, style: const TextStyle(color: Colors.white)),
-//                         Text(participant.name, style: const TextStyle(color: Colors.white)),
-//                         SizedBox(
-//                           width: double.infinity,
-//                           child: ElevatedButton(
-//                             onPressed: () => trackParticipant(participant),
-//                             style: ElevatedButton.styleFrom(
-//                               backgroundColor: Colors.green,
-//                             ),
-//                             child: const Text('Track', style: TextStyle(color: Colors.white)),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   );
-//                 },
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+class ParticipantGrid extends StatelessWidget {
+  final String title;
+  final List<String> names;
+  final void Function(String)? onTap;
+  final Color avatarColor;
 
+  const ParticipantGrid({
+    super.key,
+    required this.title,
+    required this.names,
+    this.onTap,
+    required this.avatarColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(12),
+      elevation: 4,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: names.length,
+              itemBuilder: (context, index) {
+                final name = names[index];
+                return GestureDetector(
+                  onTap: onTap != null ? () => onTap!(name) : null,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: avatarColor,
+                        child: Text(
+                          name.split(' ').last,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        name,
+                        style: const TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
