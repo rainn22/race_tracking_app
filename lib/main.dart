@@ -4,6 +4,7 @@ import 'package:race_tracking_app/providers/user_provider.dart';
 import 'package:race_tracking_app/ui/menu_screen.dart';
 import 'package:race_tracking_app/ui/participant_screen.dart';
 import 'package:race_tracking_app/ui/tracking_screen.dart';
+import 'package:race_tracking_app/ui/tracking_test.dart';
 import 'package:race_tracking_app/utils/theme.dart';
 
 void main() {
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/menu': (context) => const MenuScreen(),
         '/participant': (context) => const ParticipantScreen(),
-        '/tracker': (context) => const TrackingScreen(),
+        '/tracker': (context) => const TrackingPage(),
       },
     );
   }

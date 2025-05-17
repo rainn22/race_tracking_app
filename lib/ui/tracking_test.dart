@@ -1,55 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:race_tracking_app/dto/dummy_data.dart';
 import 'package:race_tracking_app/models/participant.dart';
-import 'package:race_tracking_app/repositories/mock/participant_repo.dart';
-//import 'package:race_tracking_app/utils/constants.dart';
 
-class TrackingScreen extends StatefulWidget {
-  const TrackingScreen({super.key});
+class TrackingPage extends StatefulWidget {
+  const TrackingPage({super.key});
 
   @override
-  State<TrackingScreen> createState() => _TrackingScreenState();
+  State<TrackingPage> createState() => _TrackingPageState();
 }
-class _TrackingScreenState extends State<TrackingScreen> {
-  final ParticipantRepository _participantRepository = ParticipantRepository(); // Instance of your service
-  List<Participant> allParticipants = [];
+
+class _TrackingPageState extends State<TrackingPage> {
+  List<Participant> allParticipants = dummyParticipants; // Use dummy data
   List<Participant> trackingParticipants = [];
   List<Participant> trackedParticipants = [];
   bool showAllTracking = true;
   bool showAllTracked = true;
-  bool _isLoading = true; // To indicate loading state
-  String? _error; // To hold any error message
 
   @override
   void initState() {
     super.initState();
-    _fetchParticipants();
-  }
-
-  Future<void> _fetchParticipants() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-    try {
-      final List<Participant> participants = await _participantRepository.getParticipants();
-      setState(() {
-        allParticipants = participants;
-        trackingParticipants = List.from(allParticipants); // Initially all are to be tracked
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'Failed to fetch participants: $e';
-        _isLoading = false;
-      });
-    }
+    trackingParticipants
+        .addAll(allParticipants); // Initially all are to be tracked
   }
 
   void moveToTracked(Participant participant) {
     setState(() {
       trackingParticipants.remove(participant);
       trackedParticipants.add(participant);
-      // In a real app, you might want to update Firebase here as well
     });
   }
 
@@ -57,7 +34,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
     setState(() {
       trackedParticipants.remove(participant);
       trackingParticipants.add(participant);
-      // In a real app, you might want to update Firebase here as well
     });
   }
 
@@ -65,8 +41,9 @@ class _TrackingScreenState extends State<TrackingScreen> {
     if (showAllTracking) {
       return trackingParticipants;
     } else {
-      // Replace with your actual "active" filtering logic based on Firebase data
-      return trackingParticipants.where((p) => p.isActive == true).toList(); // Example
+      return trackingParticipants
+          .where((p) => p.isActive == true)
+          .toList(); // Adjust as needed
     }
   }
 
@@ -74,25 +51,14 @@ class _TrackingScreenState extends State<TrackingScreen> {
     if (showAllTracked) {
       return trackedParticipants;
     } else {
-      // Replace with your actual "active" filtering logic based on Firebase data
-      return trackedParticipants.where((p) => p.isActive == true).toList(); // Example
+      return trackedParticipants
+          .where((p) => p.isActive == true)
+          .toList(); // Adjust as needed
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_error != null) {
-      return Scaffold(
-        body: Center(child: Text('Error: $_error')),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Track Participants'),
@@ -110,7 +76,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
               children: [
                 const Text(
                   'Tracking Participants',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Row(
                   children: [
@@ -121,9 +88,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         });
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: showAllTracking ? Colors.blueAccent : Colors.grey[400],
+                        foregroundColor: showAllTracking
+                            ? Colors.blueAccent
+                            : Colors.grey[400],
                       ),
-                      child: const Text('All', style: TextStyle(color: Colors.white)),
+                      child: const Text('All',
+                          style: TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 8.0),
                     TextButton(
@@ -133,9 +103,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         });
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: showAllTracking ? Colors.grey[400] : Colors.blueAccent,
+                        foregroundColor: showAllTracking
+                            ? Colors.grey[400]
+                            : Colors.blueAccent,
                       ),
-                      child: const Text('Active', style: TextStyle(color: Colors.white)),
+                      child: const Text('Active',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -159,8 +132,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(participant.bib as String, style: const TextStyle(fontSize: 18.0)), // Assuming 'id' might be nullable
-                      Text(participant.name ?? ''), // Assuming 'name' might be nullable
+                      Text(participant.bib as String,
+                          style: const TextStyle(
+                              fontSize:
+                                  18.0)), // Assuming 'id' might be nullable
+                      Text(participant.name ??
+                          ''), // Assuming 'name' might be nullable
                     ],
                   ),
                 );
@@ -174,7 +151,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
               children: [
                 const Text(
                   'Tracked Participants',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Row(
                   children: [
@@ -185,9 +163,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         });
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: showAllTracked ? Colors.blueAccent : Colors.grey[400],
+                        foregroundColor: showAllTracked
+                            ? Colors.blueAccent
+                            : Colors.grey[400],
                       ),
-                      child: const Text('All', style: TextStyle(color: Colors.white)),
+                      child: const Text('All',
+                          style: TextStyle(color: Colors.white)),
                     ),
                     const SizedBox(width: 8.0),
                     TextButton(
@@ -197,9 +178,12 @@ class _TrackingScreenState extends State<TrackingScreen> {
                         });
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: showAllTracked ? Colors.grey[400] : Colors.blueAccent,
+                        foregroundColor: showAllTracked
+                            ? Colors.grey[400]
+                            : Colors.blueAccent,
                       ),
-                      child: const Text('Active', style: TextStyle(color: Colors.white)),
+                      child: const Text('Active',
+                          style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -223,7 +207,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(participant.bib as String , style: const TextStyle(fontSize: 18.0)),
+                      Text(participant.bib as String,
+                          style: const TextStyle(fontSize: 18.0)),
                       Text(participant.name ?? ''),
                     ],
                   ),
