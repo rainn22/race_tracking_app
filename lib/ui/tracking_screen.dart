@@ -1,5 +1,15 @@
 // tracking_screen.dart
  import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:race_tracking_app/models/segment.dart';
+import 'package:race_tracking_app/models/status.dart';
+import 'package:race_tracking_app/providers/participant_provider.dart';
+import 'package:race_tracking_app/providers/race_stage_provider.dart';
+import 'package:race_tracking_app/providers/segment_time_provider.dart';
+import 'package:race_tracking_app/utils/constants.dart';
+import 'package:race_tracking_app/utils/status_color.dart';
+import 'package:race_tracking_app/utils/widgets/race_time_stamp.dart';
+import 'package:race_tracking_app/utils/widgets/segment_button.dart';
  import 'result_screen.dart'; // Import the ResultScreen
 
  enum RaceStage { swim, cycle, run }
