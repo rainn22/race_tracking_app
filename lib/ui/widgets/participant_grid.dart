@@ -29,21 +29,21 @@ class ParticipantGrid extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ),
           const Divider(height: 1),
           Expanded(
             child: GridView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // fewer columns for larger rectangular cards
+                crossAxisCount: 3, // fewer columns for larger rectangular cards
                 childAspectRatio: 1.6,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
               ),
               itemCount: nameList.length,
               itemBuilder: (context, index) {
@@ -64,13 +64,13 @@ class ParticipantGrid extends StatelessWidget {
                 return GestureDetector(
                   onTap: onTap != null ? () => onTap!(name) : null,
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: avatarColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: avatarColor, width: 2),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
+  decoration: BoxDecoration(
+    color: avatarColor.withOpacity(0.2),
+    borderRadius: BorderRadius.circular(1000), // Capsule shape
+    border: Border.all(color: avatarColor, width: 2),
+  ),
+  padding: const EdgeInsets.symmetric(
+                      vertical: 5,
                       horizontal: 8,
                     ),
                     child: Column(
