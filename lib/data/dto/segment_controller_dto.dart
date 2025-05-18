@@ -12,7 +12,7 @@ class SegmentControllerDto {
       (segmentMap as Map<String, dynamic>).forEach((segmentName, stageJson) {
         final segment = Segment.values.firstWhere(
           (seg) => seg.name == segmentName,
-          orElse: () => Segment.swim,
+          orElse: () => Segment.swimming,
         );
         final stage = RaceStageDto.fromJson(stageJson);
         stages[segment] = stage;
