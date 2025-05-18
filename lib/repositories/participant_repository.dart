@@ -26,7 +26,6 @@ class FirebaseParticipantRepository extends ParticipantRepository {
     final newParticipantData = {
       'name': name,
       'bib': bib,
-      // removed 'isActive'
     };
 
     final http.Response response = await http.post(

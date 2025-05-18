@@ -23,40 +23,32 @@ class _TrackingScreenState extends State<TrackingScreen> {
 
   void onParticipantTap(BuildContext context, String participantId) async {
     final provider = context.read<SegmentTimeProvider>();
-
     final endTime = provider.getEndTime(participantId, currentStage.label);
 
-    if (endTime != null) return;
+    if (endTime != null) {
+      provider.removeSegmentEndTime(
+        participantId: participantId,
+        segment: currentStage.label,
+      );
+    } else {
+      await provider.updateSegmentEndTime(
+        participantId: participantId,
+        segment: currentStage.label,
+      );
+    }
 
-    await provider.updateSegmentEndTime(
-      participantId: participantId,
-      segment: currentStage.label,
-    );
-    setState(() {}); // Refresh UI after tap
+    // No need for setState; Consumer will rebuild affected parts
   }
 
   @override
   Widget build(BuildContext context) {
     final timerProvider = context.watch<RaceStageProvider>();
     final participantProvider = context.watch<ParticipantProvider>();
-    final segmentTimeProvider = context.watch<SegmentTimeProvider>();
 
+    final raceStart = timerProvider.raceStage?.startTime;
     final status = timerProvider.raceStage?.status ?? Status.notStarted;
-    final startTime = timerProvider.raceStage?.startTime;
     final endTime = timerProvider.raceStage?.endTime;
     final participants = participantProvider.participantState?.data ?? [];
-
-    final trackedParticipantIds = <String>[];
-    final allParticipantIds = <String>[];
-
-    for (final participant in participants) {
-      final endTimeForSegment = segmentTimeProvider.getEndTime(participant.id, currentStage.label);
-      if (endTimeForSegment != null) {
-        trackedParticipantIds.add(participant.id);
-      } else {
-        allParticipantIds.add(participant.id);
-      }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -69,12 +61,16 @@ class _TrackingScreenState extends State<TrackingScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               color: AppColors.white,
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: AppSpacing.padding),
+                  vertical: 20.0,
+                  horizontal: AppSpacing.padding,
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -86,7 +82,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
                     ),
                     const SizedBox(height: 20),
                     RaceTimeStamp(
-                      start: startTime,
+                      start: raceStart,
                       end: status == Status.finished ? endTime : DateTime.now(),
                     ),
                   ],
@@ -94,50 +90,64 @@ class _TrackingScreenState extends State<TrackingScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            SegmentButton(
-              selectedSegment: currentStage,
-              onSegmentChanged: (segment) {
+            SegmentButtons(
+              currentStage: currentStage,
+              onSegmentSelected: (index) {
                 setState(() {
-                  currentStage = segment;
+                  currentStage = Segment.values[index];
                 });
               },
             ),
             const SizedBox(height: 10),
-            Text(
-              '${currentStage.label} Stage',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
             Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ParticipantGrid(
-                      title: 'All Participants',
-                      segment: currentStage.label,
-                      participantIds: allParticipantIds,
-                      onTap: (id) => onParticipantTap(context, id),
-                      avatarColor: Colors.grey,
-                      participants: participants,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ParticipantGrid(
-                      title: 'Tracked Participants',
-                      segment: currentStage.label,
-                      participantIds: trackedParticipantIds,
-                      onTap: null, // no tap in tracked
-                      avatarColor: currentStage == Segment.swimming
-                          ? Colors.orange
-                          : currentStage == Segment.cycling
-                              ? Colors.yellow
-                              : Colors.green,
-                      participants: participants,
-                    ),
-                  ),
-                ],
+              child: Consumer<SegmentTimeProvider>(
+                builder: (context, segmentTimeProvider, _) {
+                  final trackedParticipantIds = <String>[];
+                  final untrackedParticipantIds = <String>[];
+
+                  for (final participant in participants) {
+                    final id = participant.id;
+                    final isTracked = segmentTimeProvider.getEndTime(id, currentStage.label) != null;
+
+                    if (isTracked) {
+                      trackedParticipantIds.add(id);
+                    } else {
+                      untrackedParticipantIds.add(id);
+                    }
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: ParticipantGrid(
+                          title: 'All Participants',
+                          segment: currentStage.label,
+                          participantIds: untrackedParticipantIds,
+                          onTap: (id) => onParticipantTap(context, id),
+                          avatarColor: Colors.grey,
+                          participants: participants,
+                          raceStartTime: raceStart,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ParticipantGrid(
+                          title: 'Tracked Participants',
+                          segment: currentStage.label,
+                          participantIds: trackedParticipantIds,
+                          onTap: (id) => onParticipantTap(context, id),
+                          avatarColor: currentStage == Segment.swimming
+                              ? Colors.orange
+                              : currentStage == Segment.cycling
+                                  ? Colors.yellow
+                                  : Colors.green,
+                          participants: participants,
+                          raceStartTime: raceStart,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
