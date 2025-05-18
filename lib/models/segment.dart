@@ -1,7 +1,7 @@
 enum Segment {
-  running('Running'),
   swimming('Swimming'),
-  cycling('Cycling');
+  cycling('Cycling'),
+  running('Running');
 
   final String label;
   

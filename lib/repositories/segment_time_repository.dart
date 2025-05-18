@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-// Abstract repository interface
 abstract class SegmentTimeRepository {
   Future<void> logSegmentEndTime({
     required String participantId,
@@ -10,7 +9,6 @@ abstract class SegmentTimeRepository {
   });
 }
 
-// Firebase implementation using REST API (http package)
 class FirebaseSegmentTimeRepository extends SegmentTimeRepository {
   final String baseUrl;
   final String collection;
@@ -36,7 +34,6 @@ class FirebaseSegmentTimeRepository extends SegmentTimeRepository {
         return;
       }
     } else if (checkResponse.statusCode != HttpStatus.notFound) {
-      // Allow 404 (not found), but other codes are errors
       throw Exception("Failed to check existing end time. Status code: ${checkResponse.statusCode}");
     }
 
@@ -51,7 +48,5 @@ class FirebaseSegmentTimeRepository extends SegmentTimeRepository {
     if (response.statusCode != HttpStatus.ok && response.statusCode != HttpStatus.noContent) {
       throw Exception("Failed to set end time. Status code: ${response.statusCode}");
     }
-
-    print("End time logged for $participantId in $segment: $now");
   }
 }
