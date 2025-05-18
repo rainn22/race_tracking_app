@@ -28,7 +28,7 @@ class ResultScreen extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final rows = participants.map((p) {
+    final resultRows = participants.map((p) {
       final swimEnd = _parse(seg.getEndTime(p.id, Segment.swimming.label));
       final cycleEnd = _parse(seg.getEndTime(p.id, Segment.cycling.label));
       final runEnd = _parse(seg.getEndTime(p.id, Segment.running.label));
@@ -51,18 +51,19 @@ class ResultScreen extends StatelessWidget {
       );
     }).toList();
 
-    rows.sort((a, b) {
+    // Sort rows based on total time (nulls go last)
+    resultRows.sort((a, b) {
       if (a.total == null && b.total == null) return 0;
       if (a.total == null) return 1;
       if (b.total == null) return -1;
       return a.total!.compareTo(b.total!);
     });
 
+    // Build table rows with rank
     int rank = 1;
-
     final tableRows = <TableRow>[
       _headerRow(),
-      for (final r in rows)
+      for (final r in resultRows)
         _dataRow(
           rankText: r.total == null ? '-' : (rank++).toString(),
           r: r,
@@ -100,31 +101,33 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  // ────────────────── table helpers ──────────────────
+  // Table Header Row
   TableRow _headerRow() => const TableRow(
         decoration: BoxDecoration(color: AppColors.secondary),
         children: [
           _Header('RANK'),
           _Header('BIB'),
           _Header('NAME'),
-          _Header('RUN'),
           _Header('SWIM'),
           _Header('CYCLE'),
+          _Header('RUN'),
           _Header('TOTAL'),
         ],
       );
 
+  // Data Row for Each Participant
   TableRow _dataRow({required String rankText, required _ResultRow r}) =>
       TableRow(children: [
         _cell(rankText),
         _cell(r.bib),
         _cell(r.name),
-        _cell(_fmt(r.run)),
         _cell(_fmt(r.swim)),
         _cell(_fmt(r.cycle)),
+        _cell(_fmt(r.run)),
         _cell(_fmt(r.total)),
       ]);
 
+  // Cell Builder
   static Widget _cell(String text) => Padding(
         padding: const EdgeInsets.all(8),
         child: Text(
@@ -134,6 +137,7 @@ class ResultScreen extends StatelessWidget {
       );
 }
 
+// Header Cell Widget
 class _Header extends StatelessWidget {
   final String label;
   const _Header(this.label);
@@ -151,6 +155,7 @@ class _Header extends StatelessWidget {
       );
 }
 
+// Internal Row Model
 class _ResultRow {
   final String bib;
   final String name;

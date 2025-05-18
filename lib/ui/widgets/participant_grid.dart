@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:race_tracking_app/models/participant.dart';
 import 'package:race_tracking_app/providers/segment_time_provider.dart';
@@ -11,6 +10,7 @@ class ParticipantGrid extends StatelessWidget {
   final void Function(String)? onTap;
   final Color avatarColor;
   final List<Participant> participants;
+  final DateTime? raceStartTime;
 
   const ParticipantGrid({
     super.key,
@@ -20,7 +20,17 @@ class ParticipantGrid extends StatelessWidget {
     this.onTap,
     required this.avatarColor,
     required this.participants,
+    required this.raceStartTime, 
   });
+
+  String _formatElapsed(DateTime? start, DateTime? end) {
+    if (start == null || end == null) return "--:--:--";
+    final duration = end.difference(start);
+    final h = duration.inHours.toString().padLeft(2, '0');
+    final m = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final s = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return "$h:$m:$s";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +77,9 @@ class ParticipantGrid extends StatelessWidget {
                       orElse: () => Participant(id: id, name: 'Unknown', bib: 0),
                     );
 
-                    final timeStr = endTime != null
-                        ? DateFormat('HH:mm:ss').format(endTime)
-                        : '00:00:00';
+                    final timeStr = hasTime
+                        ? _formatElapsed(raceStartTime, endTime)
+                        : 'Not Finished';
 
                     return InkWell(
                       onTap: () {
@@ -112,7 +122,7 @@ class ParticipantGrid extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              hasTime ? timeStr : 'Not Finished',
+                              timeStr,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: hasTime ? FontWeight.bold : FontWeight.normal,
