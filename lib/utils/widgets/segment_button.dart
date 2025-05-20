@@ -49,12 +49,12 @@ class _SegmentButtonsState extends State<SegmentButtons> {
           borderColor: Colors.grey,
           selectedBorderColor: Colors.amber.shade800, 
           children: const [
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0), child: Text("Swim")),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0), child: Text("Cycle")),
-            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0), child: Text("Run")),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0), child: Text("Swim")),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0), child: Text("Cycle")),
+            Padding(padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0), child: Text("Run")),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 5),
         Text(
           '${Segment.values[_selectedIndex].label} Stage',
           textAlign: TextAlign.center,
