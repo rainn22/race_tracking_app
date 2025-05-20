@@ -20,13 +20,13 @@ class TimestampCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       color: AppColors.white,
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: 20.0, horizontal: AppSpacing.padding),
+            vertical: 5.0, horizontal: AppSpacing.padding),
         child: Column(
           children: [
             Row(
@@ -36,7 +36,7 @@ class TimestampCard extends StatelessWidget {
                 RaceStatus(value: status.label),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
             RaceTimeStamp(
               start: startTime,
               end: endTime,
