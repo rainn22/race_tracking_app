@@ -31,9 +31,9 @@ class RaceTimeStamp extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = size == TimeStampSize.large
         ? const TextStyle(
-            fontSize: 48,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
-            letterSpacing: 4,
+            letterSpacing: 2,
           )
         : const TextStyle(
             fontSize: 12,
